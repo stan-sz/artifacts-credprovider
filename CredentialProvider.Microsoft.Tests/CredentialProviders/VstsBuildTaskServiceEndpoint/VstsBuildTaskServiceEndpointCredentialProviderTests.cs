@@ -207,7 +207,6 @@ public class VstsBuildTaskServiceEndpointCredentialProviderTests
         Assert.AreEqual("testToken", result.Password);
     }
 
-
     [TestMethod]
     public async Task HandleRequestAsync_MatchesEndpointURLWithSpaces()
     {
