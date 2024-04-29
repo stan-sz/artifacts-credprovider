@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CredentialProvider.Microsoft.Tests.CredentialProviders.Vsts;
-using FluentAssertions;
 using Microsoft.Artifacts.Authentication;
 using Microsoft.Identity.Client;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -182,15 +181,15 @@ public class VstsBuildTaskServiceEndpointCredentialProviderTests
     [DataTestMethod]
     [DataRow(EnvUtil.BuildTaskExternalEndpoints)]
     [DataRow(EnvUtil.EndpointCredentials)]
-    public void HandleRequestAsync_ThrowsWithInvalidJson(string feedEndPointJsonEnvVar)
+    public async Task HandleRequestAsync_ReturnsErrorWithInvalidJsonAsync(string feedEndPointJsonEnvVar)
     {
         Uri sourceUri = new Uri(@"http://example.pkgs.vsts.me.pkgs.vsts.me/_packaging/TestFeed/nuget/v3/index.json");
         string invalidFeedEndPointJson = "this is not json";
 
         Environment.SetEnvironmentVariable(feedEndPointJsonEnvVar, invalidFeedEndPointJson);
 
-        Func<Task> act = async () => await vstsCredentialProvider.HandleRequestAsync(new GetAuthenticationCredentialsRequest(sourceUri, false, false, false), CancellationToken.None);
-        act.Should().Throw<Exception>();
+        var result = await vstsCredentialProvider.HandleRequestAsync(new GetAuthenticationCredentialsRequest(sourceUri, false, false, false), CancellationToken.None);
+        Assert.AreEqual(result.ResponseCode, MessageResponseCode.Error);
     }
 
     [TestMethod]

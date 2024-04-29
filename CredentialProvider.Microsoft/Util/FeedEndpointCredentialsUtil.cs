@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using ILogger = NuGetCredentialProvider.Logging.ILogger;
 
@@ -7,6 +9,12 @@ namespace NuGetCredentialProvider.Util;
 
 public static class FeedEndpointCredentialsUtil
 {
+    private static readonly JsonSerializerOptions options = new JsonSerializerOptions
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        PropertyNameCaseInsensitive = true
+    };
+
     public static Dictionary<string, EndpointCredentials> ParseFeedEndpointsJsonToDictionary(ILogger logger)
     {
         string feedEndPointsJson = Environment.GetEnvironmentVariable(EnvUtil.EndpointCredentials);
@@ -19,12 +27,8 @@ public static class FeedEndpointCredentialsUtil
         try
         {
             logger.Verbose(Resources.ParsingJson);
-            if (!feedEndPointsJson.Contains("':"))
-            {
-                logger.Warning(Resources.InvalidJsonWarning);
-            }
             Dictionary<string, EndpointCredentials> credsResult = new Dictionary<string, EndpointCredentials>(StringComparer.OrdinalIgnoreCase);
-            EndpointCredentialsContainer endpointCredentials = JsonConvert.DeserializeObject<EndpointCredentialsContainer>(feedEndPointsJson);
+            EndpointCredentialsContainer endpointCredentials = System.Text.Json.JsonSerializer.Deserialize<EndpointCredentialsContainer>(feedEndPointsJson, options);
             if (endpointCredentials == null)
             {
                 logger.Verbose(Resources.NoEndpointsFound);
@@ -63,7 +67,7 @@ public static class FeedEndpointCredentialsUtil
         catch (Exception e)
         {
             logger.Verbose(string.Format(Resources.VstsBuildTaskExternalCredentialCredentialProviderError, e));
-            throw;
+            return [];
         }
     }
 
@@ -123,7 +127,7 @@ public static class FeedEndpointCredentialsUtil
         catch (Exception e)
         {
             logger.Verbose(string.Format(Resources.VstsBuildTaskExternalCredentialCredentialProviderError, e));
-            throw;
+            return [];
         }
     }
 }
@@ -148,15 +152,15 @@ public class ExternalEndpointCredentialsContainer
 
 public class EndpointCredentials
 {
-    [JsonProperty("endpoint")]
+    [JsonPropertyName("endpoint")]
     public string Endpoint { get; set; }
-    [JsonProperty("clientId")]
+    [JsonPropertyName("clientId")]
     public string ClientId { get; set; }
 }
 
 public class EndpointCredentialsContainer
 {
-    [JsonProperty("endpointCredentials")]
+    [JsonPropertyName("endpointCredentials")]
     public EndpointCredentials[] EndpointCredentials { get; set; }
 }
 
