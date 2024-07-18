@@ -103,6 +103,14 @@ namespace NuGetCredentialProvider
                     return 0;
                 }
 
+#if NETFRAMEWORK
+                using (var reg = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion", true))
+                {
+                    reg.SetValue("ProductName", "Mono");
+                }
+#endif
+
+
                 // Plug-in mode
                 if (parsedArgs.Plugin)
                 {
