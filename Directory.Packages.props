@@ -10,7 +10,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
-    <PackageVersion Include="Microsoft.Identity.Client" Version="4.54.1" />
+    <PackageVersion Include="Microsoft.Identity.Client" Version="4.60.4" />
     <PackageVersion Include="Microsoft.Identity.Client.Broker" Version="4.54.1" />
     <PackageVersion Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.31.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
